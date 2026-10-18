@@ -1,0 +1,8 @@
+node_modules/
+*.tmp
+.pending*.jsonl
+.pending*.jsonl.lock
+.seen*.json
+.feeder*.log
+.env
+.DS_Store

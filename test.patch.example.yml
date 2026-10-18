@@ -1,0 +1,20 @@
+# Test-only patch. It writes candidates to agents/dsh/_feeder_test and keeps
+# queue, dedupe and log files separate from the real ones.
+# Run: dsh headless --patch "<PLUGIN_DIR>/test.patch.example.yml" "test turn"
+- insert:
+    - id: dsh-memory-feeder
+      name: '<PLUGIN_DIR>/index.js'
+      config:
+        memoryRoot: '<MEMORY_ROOT>'
+        inboxSubdir: agents/dsh/_feeder_test
+        debounceMs: 500
+        startupDelayMs: 300
+        retryDelayMs: 2000
+        maxPerRun: 3
+        maxItems: 3
+        minConfidence: 0.3
+        minTurnChars: 8
+        maxTranscriptChars: 8000
+        queuePath: '<PLUGIN_DIR>/.pending.test.jsonl'
+        seenPath: '<PLUGIN_DIR>/.seen.test.json'
+        logPath: '<PLUGIN_DIR>/.feeder.test.log'

@@ -1,0 +1,13 @@
+# Append this block to the patch layer you actually use:
+#   ~/.dsh/cordis.patch.yml                      web and headless
+#   ~/.dsh/profiles/desktop/cordis.patch.yml     desktop app only
+# Replace <PLUGIN_DIR> and <MEMORY_ROOT> with absolute paths.
+- insert:
+    - id: dsh-memory-feeder
+      name: '<PLUGIN_DIR>/index.js'
+      config:
+        memoryRoot: '<MEMORY_ROOT>'
+        inboxSubdir: agents/dsh
+        debounceMs: 5000
+        maxItems: 5
+        minConfidence: 0.6
