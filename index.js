@@ -12,6 +12,7 @@
  * promotes inbox candidates into the formal files.
  */
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 import crypto from 'node:crypto'
 import { fileURLToPath } from 'node:url'
@@ -23,7 +24,7 @@ const PLUGIN_DIR = path.dirname(fileURLToPath(import.meta.url))
 const LOG_PREFIX = '[dsh-memory-feeder]'
 
 const DEFAULTS = Object.freeze({
-  memoryRoot: '',
+  memoryRoot: process.env.DSH_MEMORY_ROOT?.trim() || path.join(os.homedir(), '.dsh', 'memory'),
   inboxSubdir: 'agents/dsh',
   debounceMs: 5000,
   startupDelayMs: 1500,
@@ -230,10 +231,6 @@ function parseModelItems(raw, cfg) {
 export function apply(ctx, rawConfig) {
   const cfg = resolveConfig(rawConfig)
   activeLogPath = cfg.logPath
-  if (cfg.memoryRoot === '') {
-    log('disabled: config.memoryRoot is required; set it to the root of your Markdown memory library')
-    return
-  }
   const states = new Map()
   const inflight = new Set()
   let seen = loadSeen()

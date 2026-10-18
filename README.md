@@ -17,22 +17,31 @@ v1 只写 `agents/dsh/inbox.md`，**不会**直接修改 `shared/`、`projects/`
 
 ## 安装
 
-### 1. 准备记忆库目录
+### 方式 A：从 GitHub 安装（web）
 
-`memoryRoot` 指向你的 Markdown 记忆库根目录。插件会自动创建候选区目录和文件：
-
-```
-<memoryRoot>/
-  agents/
-    dsh/
-      inbox.md        # 插件创建并追加
+```sh
+dsh plugin --profile web add github:Ryan-G-Rolling/dsh-memory-feeder
 ```
 
-`memoryRoot` 没有默认值，必须显式配置；未配置时插件会写一条日志并停用。
+装完重启 DSH web，并硬刷新页面。
 
-### 2. 写入 DSH 配置
+默认记忆库是 `~/.dsh/memory`（Windows 为 `C:\Users\<你>\.dsh\memory`），插件会自动创建候选区。要指向已有记忆库，在启动 DSH 的同一个 shell 里设置环境变量：
 
-DSH 分两层，装错层会出现“配置了但没反应”：
+```powershell
+# Windows PowerShell
+$env:DSH_MEMORY_ROOT = 'D:\Projects\memory'
+```
+
+```sh
+# bash / zsh
+export DSH_MEMORY_ROOT="$HOME/memory"
+```
+
+`DSH_MEMORY_ROOT` 只在 patch 里没有显式 `memoryRoot` 时生效。headless 用的 profile 不一定是 `web`；桌面版宿主只读自己的 profile 层，这两种情况按方式 B 手动接。
+
+### 方式 B：手动 patch（桌面版 / 自定义路径）
+
+DSH 分两层：
 
 - `~/.dsh/cordis.patch.yml`：给 web 和 headless 用。
 - `~/.dsh/profiles/desktop/cordis.patch.yml`：给桌面版用。桌面宿主只读 profile 层，不读 home 层，所以桌面版必须单独 insert；桌面 profile 由 Electron 独占，不能用 `dsh plugin --profile desktop` 安装。
@@ -53,13 +62,13 @@ DSH 分两层，装错层会出现“配置了但没反应”：
 
 两处可以共用同一个队列和 `.seen.json`，不会重复写同一条记忆。改完桌面 patch 后重启桌面版。
 
-> 不要把插件装在两个层都加载的位置，否则同一轮会入队两次。
+> 同一个层不要装两次，否则同一轮会入队两次。
 
 ## 配置项
 
 | 键 | 默认值 | 说明 |
 | --- | --- | --- |
-| `memoryRoot` | 无（必填） | 记忆库根目录 |
+| `memoryRoot` | `DSH_MEMORY_ROOT` 或 `~/.dsh/memory` | 记忆库根目录 |
 | `inboxSubdir` | `agents/dsh` | 候选区相对路径，写入其中的 `inbox.md` |
 | `debounceMs` | `5000` | 新轮次入队后延迟多久抽取 |
 | `startupDelayMs` | `1500` | 启动后处理遗留队列的延迟 |
@@ -96,7 +105,7 @@ rm -f "<PLUGIN_DIR>/.pending.test.jsonl" "<PLUGIN_DIR>/.seen.test.json" "<PLUGIN
 ## 日志与排错
 
 - 日志同时写 stderr 和插件目录的 `.feeder.log`，前缀 `[dsh-memory-feeder]`；stderr 不污染 headless 的 stdout。
-- 启动日志里的 `ready (memoryRoot=...)` 说明配置已读到；只看到 `disabled: config.memoryRoot is required` 就是没配路径。
+- 启动日志 `ready (memoryRoot=...)` 会打印实际使用的路径；路径不对时改 `memoryRoot` 或 `DSH_MEMORY_ROOT`。
 - 入队日志是 `queued turn ...`；抽取成功是 `extracted N item(s)` 和 `appended ...`。
 - 卡在 `skip turn: no provider/model` 时，在配置里显式指定 `provider` 和 `model`。
 
@@ -112,6 +121,7 @@ rm -f "<PLUGIN_DIR>/.pending.test.jsonl" "<PLUGIN_DIR>/.seen.test.json" "<PLUGIN
 - 只处理顶层会话；子代理的对话不入队。
 - 依赖 DSH 的 `llm` 服务和会话 `request/header` 里的 provider/model。
 - 候选不会自动合并、去重到正式条目；需要人或其他 agent 定期清理。
+- 默认只写 `~/.dsh/memory`；要接入已有记忆库，必须显式配置路径。
 - 在 Windows 的 DSH 桌面版、web 和 headless 上验证过；其他平台未实测。
 
 ## License

@@ -1,0 +1,6 @@
+# Append this bundle row to the profile that loads the plugin.
+# With this file present, `dsh plugin --profile web add github:Ryan-G-Rolling/dsh-memory-feeder`
+# installs the plugin; config falls back to DSH_MEMORY_ROOT or ~/.dsh/memory.
+- insert:
+    - id: dsh-memory-feeder
+      name: dsh-memory-feeder

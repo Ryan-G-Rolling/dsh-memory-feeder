@@ -1,6 +1,6 @@
 {
   "name": "dsh-memory-feeder",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "DSH plugin that extracts long-term facts from completed turns into an append-only Markdown memory inbox.",
   "license": "MIT",
   "author": "Ryan-G-Rolling",
@@ -16,11 +16,17 @@
   "main": "index.js",
   "files": [
     "index.js",
+    "cordis.patch.yml",
     "cordis.patch.example.yml",
     "test.patch.example.yml",
     "README.md",
     "LICENSE"
   ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
   "keywords": [
     "dsh",
     "dsh-plugin",
