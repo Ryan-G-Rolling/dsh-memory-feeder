@@ -1,5 +1,7 @@
 # dsh-memory-feeder
 
+[![npm version](https://img.shields.io/npm/v/dsh-memory-feeder.svg)](https://www.npmjs.com/package/dsh-memory-feeder)
+
 DSH 的记忆写回插件。每个完成的主会话轮次结束后，它把用户与助手的文本同步写入本地队列，再用该会话的模型抽取长期事实，追加到 Markdown 记忆库的候选区，等你核实后再合并。
 
 v1 只写 `agents/dsh/inbox.md`，**不会**直接修改 `shared/`、`projects/` 或 `MEMORY.md`。
@@ -17,7 +19,15 @@ v1 只写 `agents/dsh/inbox.md`，**不会**直接修改 `shared/`、`projects/`
 
 ## 安装
 
-### 方式 A：从 GitHub 安装（web）
+### 方式 A：从 npm 安装（web）
+
+```sh
+dsh plugin --profile web add dsh-memory-feeder
+```
+
+装完重启 DSH web，并硬刷新页面。
+
+### 方式 B：从 GitHub 安装（web）
 
 ```sh
 dsh plugin --profile web add github:Ryan-G-Rolling/dsh-memory-feeder
@@ -37,9 +47,9 @@ $env:DSH_MEMORY_ROOT = 'D:\Projects\memory'
 export DSH_MEMORY_ROOT="$HOME/memory"
 ```
 
-`DSH_MEMORY_ROOT` 只在 patch 里没有显式 `memoryRoot` 时生效。headless 用的 profile 不一定是 `web`；桌面版宿主只读自己的 profile 层，这两种情况按方式 B 手动接。
+`DSH_MEMORY_ROOT` 只在 patch 里没有显式 `memoryRoot` 时生效。headless 用的 profile 不一定是 `web`；桌面版宿主只读自己的 profile 层，这两种情况按方式 C 手动接。
 
-### 方式 B：手动 patch（桌面版 / 自定义路径）
+### 方式 C：手动 patch（桌面版 / 自定义路径）
 
 DSH 分两层：
 
